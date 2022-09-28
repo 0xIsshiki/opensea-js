@@ -5,7 +5,7 @@ import * as ethUtil from "ethereumjs-util";
 import * as _ from "lodash";
 import Web3 from "web3";
 import { JsonRpcResponse } from "web3-core-helpers/types";
-import { AbstractProvider } from "web3-core/types";
+import { HttpProvider } from "web3-core/types";
 import { Contract } from "web3-eth-contract";
 import { WyvernProtocol } from "wyvern-js";
 import {
@@ -525,7 +525,7 @@ export async function personalSignAsync(
   signerAddress: string
 ): Promise<ECSignature> {
   const signature = await promisify<JsonRpcResponse | undefined>((c) =>
-    (web3.currentProvider as AbstractProvider).sendAsync(
+    (web3.currentProvider as HttpProvider).send(
       {
         method: "personal_sign",
         params: [message, signerAddress],
@@ -562,7 +562,7 @@ export async function signTypedDataAsync(
   try {
     // Using sign typed data V4 works with a stringified message, used by browser providers i.e. Metamask
     signature = await promisify<JsonRpcResponse | undefined>((c) =>
-      (web3.currentProvider as AbstractProvider).sendAsync(
+      (web3.currentProvider as HttpProvider).send(
         {
           method: "eth_signTypedData_v4",
           params: [signerAddress, JSON.stringify(message)],
@@ -577,7 +577,7 @@ export async function signTypedDataAsync(
     // Fallback to normal sign typed data for node providers, without using stringified message
     // https://github.com/coinbase/coinbase-wallet-sdk/issues/60
     signature = await promisify<JsonRpcResponse | undefined>((c) =>
-      (web3.currentProvider as AbstractProvider).sendAsync(
+      (web3.currentProvider as HttpProvider).send(
         {
           method: "eth_signTypedData",
           params: [signerAddress, message],
